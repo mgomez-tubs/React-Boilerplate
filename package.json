@@ -4,9 +4,8 @@
   "description": "A simple react boilerplate.",
   "main": "index.jsx",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack",
-    "start": "webpack serve --env development"
+    "start": "webpack serve --env development",
+    "build": "webpack"
   },
   "license": "ISC",
   "devDependencies": {
