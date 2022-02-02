@@ -10,6 +10,13 @@ module.exports = (env) => {
   return {
     mode: isDevelopment ? "development" : "production",
     entry: "./src/index.jsx",
+    output: {
+      filename: "[name].bundle.js",
+      path: path.resolve(__dirname, "build"),
+      assetModuleFilename: "images/[hash][ext][query]",
+      clean: true,
+      pathinfo: false,
+    },
     module: {
       rules: [
         {
@@ -32,11 +39,7 @@ module.exports = (env) => {
         },
         {
           test: /\.(png|svg|jpe?g|gif)$/i,
-          use: [
-            {
-              loader: "file-loader",
-            },
-          ],
+          type: "asset/resource",
           include: [path.resolve(__dirname, "src/")],
           exclude: /node_modules/,
         },
