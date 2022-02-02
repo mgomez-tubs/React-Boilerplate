@@ -1,23 +1,21 @@
 const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
 const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
-const path = require('path');
+const path = require("path");
 
 module.exports = (env) => {
   const isDevelopment = env.development || false;
   const options = {
-    generateBundleAnalyzer : false
-  }
+    generateBundleAnalyzer: false,
+  };
   return {
     mode: isDevelopment ? "development" : "production",
-    entry: "./src/index.tsx",
+    entry: "./src/index.jsx",
     module: {
       rules: [
         {
-          test: /\.tsx?$/,
-          use: {
-            loader: "babel-loader",
-          },
-          exclude: /node_modules/,
+          test: /\.css$/i,
+          use: ["style-loader", "css-loader"],
+          include: [path.resolve(__dirname, "src/")],
         },
         {
           test: /\.s[ac]ss$/i,
@@ -29,6 +27,8 @@ module.exports = (env) => {
             // Compiles Sass to CSS
             "sass-loader",
           ],
+          include: [path.resolve(__dirname, "src/")],
+          exclude: /node_modules/,
         },
         {
           test: /\.(png|svg|jpe?g|gif)$/i,
@@ -37,39 +37,33 @@ module.exports = (env) => {
               loader: "file-loader",
             },
           ],
-        },
-        { 
-          test: /\.(woff|woff2|eot|ttf|otf)$/,
-          use: [
-            {
-              loader: 'file-loader',
-              options: {
-                outputPath: 'fonts',
-              }
-            }
-          ],
+          include: [path.resolve(__dirname, "src/")],
+          exclude: /node_modules/,
         },
         {
           test: /\.(js|jsx)$/,
-          exclude: /node_modules/,
-          use: {
-            loader: require.resolve("babel-loader"),
-            options: {
-              plugins: [
-                isDevelopment && require.resolve("react-refresh/babel"),
-              ].filter(Boolean),
-            },
+          include: [path.resolve(__dirname, "src/")],
+          loader: require.resolve("babel-loader"),
+          options: {
+            presets: [
+              "@babel/preset-env",
+              ["@babel/preset-react", { runtime: "automatic" }],
+            ],
           },
         },
       ],
     },
     devServer: {
       hot: true,
-      clientLogLevel: "silent",
-      contentBase: "./dist",
+      client: {
+        logging: "warn",
+      },
+      static: {
+        directory: path.join(__dirname, "dist"),
+      },
     },
     resolve: {
-      extensions: ['.tsx', '.ts', '.js'],
+      extensions: [".jsx", ".js"],
     },
     plugins: [
       isDevelopment && new ReactRefreshWebpackPlugin(),
@@ -77,7 +71,10 @@ module.exports = (env) => {
     ].filter(Boolean),
     devtool: "eval-source-map",
     optimization: {
-      usedExports: true,
+      runtimeChunk: true,
+      removeAvailableModules: false,
+      removeEmptyChunks: false,
+      splitChunks: false,
     },
   };
 };
